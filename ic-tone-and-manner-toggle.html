@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IC — Tone &amp; Manner</title>
+<style>
+  :root {
+    --bg: #F6F6F3;
+    --surface: #FFFFFF;
+    --deepest: #FFFFFF;
+    --text: #101114;
+    --muted: rgba(16,17,20,0.62);
+    --faint: rgba(16,17,20,0.2);
+    --hairline: rgba(16,17,20,0.1);
+    --ic-blue: #378ADD;
+    --ic-blue-accent: #1F6FB8;
+    --ic-blue-hover: #85B7EB;
+    --live: #C7373C;
+    --toggle-bg: rgba(16,17,20,0.06);
+    --toggle-text: #101114;
+
+    --f-display: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --f-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0A0A0A;
+    --surface: #141414;
+    --deepest: #050505;
+    --text: #FFFFFF;
+    --muted: rgba(255,255,255,0.6);
+    --faint: rgba(255,255,255,0.18);
+    --hairline: rgba(255,255,255,0.08);
+    --ic-blue: #3F9FFF;
+    --ic-blue-accent: #3F9FFF;
+    --ic-blue-hover: #8FBFFF;
+    --live: #E5484D;
+    --toggle-bg: rgba(255,255,255,0.1);
+    --toggle-text: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--f-display);
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .container { max-width: 980px; margin: 0 auto; padding: 0 32px; }
+  .section { padding: 72px 0; border-bottom: 1px solid var(--hairline); }
+  .section:last-child { border-bottom: none; }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline);
+    background: var(--toggle-bg);
+    color: var(--toggle-text);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+  .theme-toggle:hover { border-color: var(--ic-blue); }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ic-blue-accent);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    font-size: clamp(40px, 7vw, 84px);
+  }
+  h2 {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    font-size: clamp(26px, 3.4vw, 40px);
+    margin-bottom: 28px;
+  }
+  p { color: var(--muted); line-height: 1.6; font-size: 16px; max-width: 640px; }
+
+  header.hero {
+    padding: 120px 0 80px;
+    position: relative;
+  }
+  header.hero .meta {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  header.hero .sub { margin-top: 24px; font-size: 18px; }
+
+  /* Color swatches */
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .swatch {
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  .swatch__color { height: 88px; }
+  .swatch__label {
+    padding: 12px 14px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+  .swatch__name { display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.15em; font-size: 10px; color: var(--muted); }
+  .swatch__hex { color: var(--text); }
+
+  /* Typography samples */
+  .type-sample { margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--hairline); }
+  .type-sample:last-child { border: none; margin: 0; padding: 0; }
+  .type-sample .label {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ic-blue-accent);
+    margin-bottom: 12px;
+  }
+  .type-sample .big { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+  .type-sample .mono-line { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+  .type-sample .serif-line { font-family: var(--f-serif); font-size: 30px; font-style: italic; color: var(--text); }
+  .type-sample .meta { margin-top: 10px; color: var(--faint); font-size: 12px; font-family: var(--f-mono); }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 28px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 24px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+  }
+  .btn--blue { background: var(--ic-blue); color: #fff; border: 1px solid var(--ic-blue); }
+  .btn--blue:hover { background: var(--ic-blue-hover); border-color: var(--ic-blue-hover); transform: translateY(-2px); }
+  .btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--faint); }
+  .btn--ghost:hover { border-color: var(--text); transform: translateY(-2px); }
+
+  /* Card hover demo (grayscale -> color) */
+  .card-demo {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    background: var(--deepest);
+  }
+  .card__media {
+    height: 160px;
+    background: linear-gradient(135deg, var(--ic-blue), #05203a 60%, #0A0A0A);
+    filter: grayscale(1) contrast(1.05);
+    transition: filter 0.5s ease, transform 0.7s cubic-bezier(.2,.7,.2,1), background 0.25s ease;
+  }
+  .card:hover .card__media { filter: grayscale(0); transform: scale(1.05); }
+  .card__body { padding: 16px 18px 20px; }
+  .card__cat { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ic-blue-accent); margin-bottom: 8px; }
+  .card__title { font-weight: 700; font-size: 17px; letter-spacing: -0.01em; }
+
+  /* Motto block */
+  .motto {
+    background: var(--surface);
+    padding: 96px 0;
+    text-align: center;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+  :root[data-theme="dark"] .motto {
+    background: var(--deepest);
+    border-top: none;
+    border-bottom: none;
+  }
+  .motto blockquote {
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+  .motto .sub { margin-top: 20px; font-size: clamp(16px, 2vw, 22px); color: var(--muted); }
+  .motto .caption { margin-top: 24px; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.2em; color: var(--faint); text-transform: uppercase; }
+
+  .principle-list { margin-top: 20px; display: grid; gap: 14px; }
+  .principle {
+    display: flex; gap: 16px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+  }
+  .principle__num { font-family: var(--f-mono); font-size: 12px; color: var(--ic-blue-accent); flex-shrink: 0; }
+  .principle__text { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .principle__text b { color: var(--text); }
+
+  .contrast-note {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 640px;
+  }
+  .contrast-note b { color: var(--text); }
+
+  footer {
+    padding: 48px 0 80px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" type="button">🌙 Dark로 보기</button>
+
+<header class="hero container">
+  <div class="meta">— EST. 2024 &nbsp;/&nbsp; PENN STATE &nbsp;/&nbsp; TONE &amp; MANNER GUIDE</div>
+  <h1>Challenge<br>Everything,<br><span style="color:var(--ic-blue)">Fear Nothing.</span></h1>
+  <p class="sub">IC(Infinite Challenge) 웹사이트 실제 코드 기준으로 정리한 톤앤매너 가이드입니다. 우측 상단 버튼으로 라이트/다크를 전환해서 비교해보세요.</p>
+</header>
+
+<section class="section container">
+  <div class="eyebrow">01 — Mood</div>
+  <h2 id="moodTitle">라이트 · 에디토리얼 · 자신감</h2>
+  <p id="moodBody">배경은 거의 완전한 화이트. 잡지 화보 같은 여백과 절제된 구성으로 프리미엄하고 진지한 인상을 줍니다.</p>
+</section>
+
+<section class="section container">
+  <div class="eyebrow">02 — Color</div>
+  <h2>컬러 팔레트</h2>
+  <div class="swatches">
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--bg)"></div>
+      <div class="swatch__label"><span class="swatch__name">Background</span><span class="swatch__hex" id="hexBg">#F6F6F3</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--surface);border-bottom:1px solid var(--hairline)"></div>
+      <div class="swatch__label"><span class="swatch__name">Surface</span><span class="swatch__hex" id="hexSurface">#FFFFFF</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--text)"></div>
+      <div class="swatch__label"><span class="swatch__name">Text</span><span class="swatch__hex" id="hexText">#101114</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--ic-blue)"></div>
+      <div class="swatch__label"><span class="swatch__name">IC Blue (Primary)</span><span class="swatch__hex" id="hexBlue">#378ADD</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--ic-blue-hover)"></div>
+      <div class="swatch__label"><span class="swatch__name" id="hexAccentLabel">IC Blue — Hover</span><span class="swatch__hex" id="hexAccent">#85B7EB</span></div>
+    </div>
+    <div class="swatch">
+      <div class="swatch__color" style="background:var(--live)"></div>
+      <div class="swatch__label"><span class="swatch__name">Live / Alert</span><span class="swatch__hex" id="hexLive">#C7373C</span></div>
+    </div>
+  </div>
+  <p class="contrast-note" id="contrastNote">라이트에선 원본 IC블루(#378ADD)를 기본으로 쓰고, 버튼 호버 시 더 밝은 <b>#85B7EB</b>로 전환됩니다.</p>
+</section>
+
+<section class="section container">
+  <div class="eyebrow">03 — Typography</div>
+  <h2>서체 사용법</h2>
+
+  <div class="type-sample">
+    <div class="label">Display / Body — Space Grotesk</div>
+    <div class="big">Do the Impossible.</div>
+    <div class="meta">헤드라인·본문 전체. weight 700, letter-spacing -0.03~-0.04em로 촘촘하고 힘있게. 히어로 타이틀은 최대 168px까지도 사용.</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="label">Mono — JetBrains Mono</div>
+    <div class="mono-line">— WHO WE ARE / 01 — CHALLENGES / EST. 2024</div>
+    <div class="meta">라벨·메타정보·"eyebrow" 태그 전용. 항상 대문자 + 자간 0.18~0.22em로 넓게 — 잡지 태그처럼 보이게.</div>
+  </div>
+
+  <div class="type-sample">
+    <div class="label">Serif (포인트용) — Cormorant Garamond</div>
+    <div class="serif-line">— a quiet accent, used sparingly</div>
+    <div class="meta">본문·헤드라인엔 안 씀. 아주 가끔 포인트 문구에만 이탤릭으로.</div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="eyebrow">04 — Components</div>
+  <h2>버튼</h2>
+  <div class="btn-row">
+    <div class="btn btn--blue">우리와 함께하기 →</div>
+    <div class="btn btn--ghost">▶ IC 소개 영상</div>
+  </div>
+  <p style="margin-top:20px">알약모양(border-radius: 999px). Primary는 블루 채움, Secondary는 고스트(테두리만). 호버 시 살짝 위로 뜨는 애니메이션(translateY -2px).</p>
+</section>
+
+<section class="section container">
+  <div class="eyebrow">05 — Card / Image Interaction</div>
+  <h2>흑백 → 컬러 호버</h2>
+  <p>카드 이미지는 기본 흑백(grayscale)이다가 마우스를 올리면 컬러로 전환 + 살짝 확대(scale 1.05). 마우스를 떼면 다시 흑백으로 돌아옵니다. (마우스를 올려서 확인해보세요 ↓)</p>
+  <div class="card-demo">
+    <div class="card">
+      <div class="card__media"></div>
+      <div class="card__body">
+        <div class="card__cat">Project</div>
+        <div class="card__title">키글로 (예시)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__media" style="background:linear-gradient(135deg,var(--ic-blue-hover),#141414 65%,#050505)"></div>
+      <div class="card__body">
+        <div class="card__cat">Challenge</div>
+        <div class="card__title">챌린지 카드 예시</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="motto">
+  <div class="container">
+    <blockquote>DO THE IMPOSSIBLE.</blockquote>
+    <div class="sub">끝없이 도전하라. 끝없이 살아가라.</div>
+    <div class="caption">INFINITE CHALLENGE · I.C</div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="eyebrow">06 — Voice / Copy Tone</div>
+  <h2>카피 톤</h2>
+  <div class="principle-list">
+    <div class="principle">
+      <div class="principle__num">01</div>
+      <div class="principle__text"><b>영어 임팩트 헤드라인 + 한글 서브카피 병기.</b> "Challenge Everything, Fear Nothing." 처럼 짧고 명령조인 영어 한 줄, 그 아래 한국어로 부연.</div>
+    </div>
+    <div class="principle">
+      <div class="principle__num">02</div>
+      <div class="principle__text"><b>실행력을 강조하는 문장.</b> "실행이 곧 증명이다." "해볼 수 있는 건 다 해보자." — 말보다 행동, 결과로 증명한다는 톤.</div>
+    </div>
+    <div class="principle">
+      <div class="principle__num">03</div>
+      <div class="principle__text"><b>숫자·팩트로 신뢰 부여.</b> "EST. 2024 / PENN STATE / 30+ MEMBERS" 처럼 구체적 수치를 모노스페이스 태그로 배치.</div>
+    </div>
+    <div class="principle">
+      <div class="principle__num">04</div>
+      <div class="principle__text"><b>과장된 수식어·느낌표 지양.</b> 담백하고 단정적인 어투. 겸손한 척하지 않되 시끄럽지도 않게.</div>
+    </div>
+  </div>
+</section>
+
+<footer id="footerText">IC — Infinite Challenge · Tone &amp; Manner Reference</footer>
+
+<script>
+  var THEMES = {
+    light: {
+      hexBg: '#F6F6F3', hexSurface: '#FFFFFF', hexText: '#101114',
+      hexBlue: '#378ADD', hexAccent: '#85B7EB', hexAccentLabel: 'IC Blue — Hover',
+      hexLive: '#C7373C',
+      contrastNote: '라이트에선 원본 IC블루(#378ADD)를 기본으로 쓰고, 버튼 호버 시 더 밝은 <b>#85B7EB</b>로 전환됩니다. (흰 배경 위 #378ADD 명암비 약 3.6:1)',
+      moodTitle: '라이트 · 에디토리얼 · 자신감',
+      moodBody: '배경은 거의 완전한 화이트. 잡지 화보 같은 여백과 절제된 구성으로 프리미엄하고 진지한 인상을 줍니다.',
+      toggleLabel: '🌙 Dark로 보기',
+      footer: 'IC — Infinite Challenge · Tone & Manner Reference (Light)'
+    },
+    dark: {
+      hexBg: '#0A0A0A', hexSurface: '#141414', hexText: '#FFFFFF',
+      hexBlue: '#3F9FFF', hexAccent: '#8FBFFF', hexAccentLabel: 'IC Blue — Hover',
+      hexLive: '#E5484D',
+      contrastNote: '다크에선 밝기를 최대로 올린 <b>#3F9FFF</b> 하나로 큰 요소·작은 텍스트 전부 커버합니다. 검정 배경 위 명암비 약 7.2:1로 원본(#378ADD, 약 5.5:1)보다도 더 선명합니다.',
+      moodTitle: '다크 · 에디토리얼 · 자신감',
+      moodBody: '배경은 거의 완전한 블랙. 잡지 화보 같은 여백과 미묘한 필름그레인 질감으로 프리미엄하고 진지한 인상을 줍니다.',
+      toggleLabel: '☀️ Light로 보기',
+      footer: 'IC — Infinite Challenge · Tone & Manner Reference (Dark)'
+    }
+  };
+
+  function applyTheme(mode) {
+    var root = document.documentElement;
+    if (mode === 'dark') { root.setAttribute('data-theme', 'dark'); }
+    else { root.setAttribute('data-theme', 'light'); }
+
+    var t = THEMES[mode];
+    document.getElementById('hexBg').textContent = t.hexBg;
+    document.getElementById('hexSurface').textContent = t.hexSurface;
+    document.getElementById('hexText').textContent = t.hexText;
+    document.getElementById('hexBlue').textContent = t.hexBlue;
+    document.getElementById('hexAccent').textContent = t.hexAccent;
+    document.getElementById('hexAccentLabel').textContent = t.hexAccentLabel;
+    document.getElementById('hexLive').textContent = t.hexLive;
+    document.getElementById('contrastNote').innerHTML = t.contrastNote;
+    document.getElementById('moodTitle').textContent = t.moodTitle;
+    document.getElementById('moodBody').textContent = t.moodBody;
+    document.getElementById('themeToggle').textContent = t.toggleLabel;
+    document.getElementById('footerText').textContent = t.footer;
+    document.getElementById('themeToggle').dataset.mode = mode;
+  }
+
+  document.getElementById('themeToggle').addEventListener('click', function () {
+    var current = this.dataset.mode || 'light';
+    applyTheme(current === 'light' ? 'dark' : 'light');
+  });
+
+  applyTheme('light');
+</script>
+
+</body>
+</html>
+

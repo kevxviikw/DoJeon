@@ -1,0 +1,13 @@
+{
+  "name": "dojeon-app",
+  "private": true,
+  "type": "module",
+  "description": "DoJeon (dev codename Beast Mode) -- backend engine, Supabase Edge Functions, and iOS client package.",
+  "scripts": {
+    "test": "node --test supabase/functions/_shared/logic/test/*.test.ts",
+    "supabase:start": "supabase start",
+    "supabase:db:push": "supabase db push",
+    "supabase:functions:deploy": "supabase functions deploy",
+    "supabase:functions:serve": "supabase functions serve"
+  }
+}

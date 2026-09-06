@@ -1,0 +1,125 @@
+PIC CLUB  ·  A-TO-Z APP PROJECT  ·  PROPOSAL FOR CONFIRMATION
+DoJeon
+도전 — “Challenge”
+An extreme-goal execution app — development codename “Beast Mode”
+Submitted by: Kunwoo
+Date: September 2, 2026
+Requesting: Confirmation as the club&apos;s official A-to-Z app submission
+Platform: iOS, distributed to the club via TestFlight
+This version tracks four updates made after presenting the proposal and hearing the club&apos;s feedback on September 5, 2026 — shown underlined below and gathered in the Addendum at the end.
+01   Summary
+DoJeon (도전 — “challenge”) is an app for taking on a genuinely hard goal and actually finishing it — not another habit tracker, and not a motivational-content feed.
+A member sets a hard, time-boxed goal with a real deadline — ship an app in 30 days, finish a portfolio before internship season, complete an exam-prep sprint. The app turns that goal into a demanding but realistic plan, then keeps the member moving through daily work sessions inside a small squad of fellow PIC members who are working on their own goals at the same time. Progress is proven with real evidence, not a checkbox, and when reality diverges from the plan, the app replans honestly instead of quietly hiding the gap.
+This proposal lays out the concept, how it works, what we deliberately chose not to build, the technical plan, and the timeline — and asks for your confirmation to move forward as PIC&apos;s official A-to-Z submission, distributed internally through TestFlight.
+02   The Problem
+Most “discipline” apps fail in one of two directions. Pure motivational content — the beast-mentality edits and hustle content this idea started from — is passive: a user gets the same feeling from free YouTube content, with zero commitment and zero plan, and it asks nothing of them. Pure enforcement apps — the ones that scold, lock you out, or shame you on a public leaderboard — put the discipline outside the user, in the software. The moment someone disables it or falls behind once, the discipline goes with it, and it fails the actual goal of building real follow-through.
+DoJeon is built to sit between those two failure modes: a real plan, real evidence, and real people who are grinding alongside you — not judging you.
+03   The Concept
+Instead of tracking endless daily habits, a member launches a time-limited mission toward one concrete, checkable result — not “work on my portfolio,” but “publish three completed case studies.” A vague goal can&apos;t be measured; a checkable one can.
+Missions run inside a small squad of three to six people — naturally, fellow PIC members — each pursuing their own individual goal in parallel. Squad is the strong recommendation: it&apos;s where the app gets its edge. But it is not a requirement. A member recruiting a squad, or between squads, still gets the complete plan, work session, evidence, and replanning loop with nothing disabled.
+04   How It Works: The Core Loop
+The product is one loop, repeated daily: Forge, Push, Proof, and Adjust.
+Forge — plan the goal
+The member states the goal and its deadline. Claude (Anthropic&apos;s AI) breaks it into a plan with three tiers: a Minimum that&apos;s doable even on the worst day, a Target that keeps the mission on schedule, and a Stretch that&apos;s the actual reach goal. If the scope genuinely doesn&apos;t fit the deadline and the member&apos;s available time, the plan says so directly and offers real tradeoffs — extend the deadline, cut scope, or find more time — rather than confidently generating a schedule that was never realistic.
+Push — work, together or alone
+This is where the squad concept becomes an actual feature rather than a mood board. A work session is a real, structured activity:
+Choose today&apos;s task and its intended output.
+Start a timed work session.
+Squad members can optionally join with their own tasks — no video call required.
+Finish by submitting the output, or recording a blocker instead.
+See a short summary of what everyone in the squad accomplished.
+Participation is asynchronous by default. With three to six people, schedules won&apos;t line up every day, and an empty “working now” screen shouldn&apos;t feel like the product is dead — the summary always shows the squad&apos;s most recent completed sessions, not just who happens to be online right now.
+Proof — evidence, not a checkbox
+Each check-in requires proof tied to that day&apos;s task — a photo, a short voice note, or a logged count or duration — posted to the squad feed and labeled self-reported, attached, or squad-reviewed. Nothing is automatically stamped “verified,” and the AI can flag a gap or summarize a submission, but it never acts as an infallible judge of someone&apos;s work.
+Privacy is a designed requirement, not an afterthought: completion status is always visible to the squad, but the underlying file is opt-in per submission — a member can share that they finished without sharing the file itself. Joining a live session is opt-in every time. Leaving a squad never requires an explanation, and removing a piece of evidence later deletes the file while preserving the honest record that something was, or wasn&apos;t, submitted — so history can&apos;t be quietly rewritten in either direction.
+Adjust — honest replanning
+When a member falls behind, the app doesn&apos;t silently move the deadline, and it doesn&apos;t pile on unrealistic catch-up work either. It follows a fixed sequence:
+One missed session does not automatically rewrite the mission.
+The app first checks whether the existing schedule has room to recover.
+If the goal genuinely no longer fits, it presents scope, time, and deadline tradeoffs.
+The member approves any material change.
+The original commitment and the revision both stay visible in the mission&apos;s history.
+Repeated Minimum-only days trigger a full plan review, because the deadline may no longer be realistic.
+This is the rule that keeps DoJeon feeling like a genuine commitment rather than a polite way to postpone a goal indefinitely.
+05   What the Member Actually Sees
+The home screen leads with what&apos;s next, not a streak count: the next deliverable, milestone progress, deadline status, and the next scheduled work session. A full history is one tap away, and it&apos;s always accurate, but it isn&apos;t the first thing a member sees when they open the app.
+That history also doesn&apos;t lump every setback into one “miss.” It distinguishes four different things that can happen — work that wasn&apos;t done, work that was done but the evidence wasn&apos;t submitted, a day of rest the member planned in advance, and a session that was cut short by a real technical problem. Treating those as the same event would punish people for things that aren&apos;t actually failures.
+06   What We Deliberately Left Out
+A few choices matter as much as what&apos;s included, because they define what kind of app this is:
+NO INVENTED PENALTIES
+There are no financial stakes, forfeits, or punitive consequences in the MVP. A miss is never hidden or softened — it&apos;s reported honestly — but the app doesn&apos;t manufacture punishment on top of it. The pressure comes from a small group of real people showing up together, not from fear of a penalty.
+NO LEADERBOARD
+A cross-member leaderboard was considered and removed from the roadmap entirely. It would turn finishing into performing for an audience instead of doing the work — exactly what this app is built to avoid.
+SOLO ISN&apos;T BROKEN
+Squad is the strong recommendation, but a member without a squad yet — or between squads — keeps the complete plan, session, evidence, and replanning loop. Nothing about using DoJeon alone is disabled or watered down.
+Updated after further club feedback — the “no invented penalties” and “no leaderboard” positions above are partially superseded within a squad. See the Addendum at the end of this proposal.
+07   Naming
+The proposed name is DoJeon (도전), Korean for “challenge” — a direct tie to PIC&apos;s own slogan, “Challenge Everything, Fear Nothing.” “Beast Mode” has been the internal development codename through the design process and will keep appearing in engineering documentation until the name is finalized. Before this is locked in, we&apos;ll run an App Store Connect uniqueness check, since the app name has to be globally unique even for club-only TestFlight distribution.
+08   Technical Feasibility &amp; Distribution
+DoJeon builds directly on the infrastructure from Kunwoo&apos;s earlier PIC project (VoiMo, a voice-note app), which keeps the technical risk low:
+Apple Developer Program enrollment and the Xcode project scaffold carry over as-is.
+Swift and SwiftUI on iOS 17/18, the same stack already in use.
+The voice- and photo-evidence capture reuses the existing recording engine and permissions handling.
+Claude&apos;s API generates and adjusts the mission plans, using the same key-proxy pattern already built for VoiMo.
+Supabase (Postgres) provides the shared backend squads need to see each other&apos;s sessions and check-ins.
+Added for the Addendum below: the same Supabase backend also stores squad leaderboard rankings, check-approval votes, and the goal-similarity index used for solo matching.
+Distribution is internal TestFlight testing — PIC members are invited directly to the Apple Developer team, which is free and has no external Beta App Review wait, appropriate for a club-only build.
+What still needs to happen before members can install it
+Requirement
+Note
+Apple Developer Program enrollment ($99/yr)
+Already in place from the prior project
+New App Store Connect record + name reservation
+Pending the uniqueness check noted above
+Internal testing set up (not external)
+Free for club members, no external review wait
+Supabase project stood up
+Auth, squads, sessions, and check-in data
+First installable TestFlight build shipped
+A solo-only build already counts — shipped early, improved in place
+09   Build Plan &amp; Timeline
+There&apos;s no fixed calendar deadline — the plan is paced by milestone, moving to the next phase as soon as the current one demos cleanly. Each phase ships its own TestFlight build, so there&apos;s always something installable to check progress against.
+Phase
+What ships
+0 — Setup
+Reuse existing Apple/Xcode setup, reserve the app name, stand up the shared backend
+1 — Solo loop
+Goal input, AI-generated plan, daily check-in with proof — usable end to end by one member
+2 — Squad
+Squad creation, the shared work-session flow, and cross-member visibility
+3 — Adjust
+Honest replanning when a member falls behind, with the approval rules in Section 4
+4 — TestFlight release
+Club members added as internal testers; first real feedback collected
+5 — Stretch (post-approval)
+Push notifications, a lock-screen quick check-in, and eventually Android
+10   What We&apos;re Asking For
+Specifically, we&apos;re asking for:
+Confirmation to move forward with DoJeon as PIC&apos;s official A-to-Z app submission, replacing the earlier VoiMo pitch.
+Approval to distribute build to club members internally via TestFlight as development phases complete.
+A short slot at an upcoming meeting for a live demo once Phase 2 (squad) is ready — setting a goal on stage, running a real work session, and showing how the app handles falling behind.
+Confirmation of the four updates gathered in the Addendum below — the squad leaderboard, solo matching, peer-approved check-ins with a removal threshold, and post-mission data collection.
+A handful of product details are still being worked out and don&apos;t block this approval: exactly how squads form (invite-only versus auto-matched), the default squad size, and whether work sessions run on a shared schedule or stay fully flexible. These will be settled during Phase 2 development, informed by how the first solo build is received.
+A more detailed technical build manual — covering architecture, the full approval checklist, and a line-by-line build plan — exists separately for engineering reference and is available on request.
+11   Closing
+DoJeon is meant to prove something specific: that a hard goal, a demanding but honest plan, and a small group of people actually grinding together can produce real, finished work — not just another tracked streak. Happy to walk through a live demo, or answer any questions before the next meeting.
+Added after presenting this proposal — September 5, 2026
+Addendum: Updates From the Club&apos;s Feedback
+The four updates below came out of presenting this proposal and talking it through with the club. They refine the design above — and in two places, they supersede specific positions in Section 6 (“No invented penalties” and “No leaderboard”), which is left exactly as originally written above so there&apos;s an accurate record of what was first proposed.
+A. Squad-Scoped Leaderboard
+Each squad now has a leaderboard, visible only to that squad&apos;s three to six members — never across squads. It ranks members on consistency and completion within their own mission, not against strangers. This updates the “No leaderboard” position in Section 6: the original concern was a cross-squad leaderboard turning finishing into a public performance for people who don&apos;t know each other. A small, known-squad leaderboard is different enough from that to include — everyone on it is already grinding alongside everyone else.
+B. Solo Matching
+A member who starts alone can now search for potential squad-mates instead of staying solo by default. Matching is based on similarity in goal type and pace, giving new members a starting point for forming a squad rather than leaving it entirely to chance.
+C. Peer-Approved Check-Ins &amp; a Removal Threshold
+A daily check is no longer confirmed by self-report alone. Submitted evidence is reviewed by the member&apos;s squad-mates, and a check is confirmed once it clears an approval threshold from the squad — evaluation shifts from the individual to peer confirmation within a small, trusted group, rather than an algorithm or a stranger.
+A duration-based limit accompanies this: if a member&apos;s missed days pass a set share of their mission&apos;s total length, they are removed from the squad. This is the one point where Section 6&apos;s original “no invented penalties” position is superseded — the club specifically asked for a mechanism with a real consequence, short of anything financial or shame-based. Solo missions are unaffected, since there&apos;s no squad to vote or to be removed from.
+Parameter
+Starting value (adjustable)
+Check approval threshold
+75% of the squad must approve
+Missed-day removal threshold
+Missed days exceed one third of the mission&apos;s total duration
+D. Mission End &amp; Data
+When a mission&apos;s duration ends, its squad disbands. Five members who took on a 50-day “quit smoking” challenge together finish it together, and each then moves on to a new goal, alone or in a new squad. With member consent, DoJeon collects data on achievement, consistency, and behavior patterns across missions at that point.
+This is proposed as the app&apos;s basis for revenue, rather than charging for the core mission experience itself. It&apos;s a hypothesis to test against real usage once members are actually running missions, not a finalized business model.
+These four updates are proposed alongside the rest of this document and are part of what we&apos;re asking you to confirm.
