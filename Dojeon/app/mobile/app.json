@@ -23,7 +23,11 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,7 +38,13 @@
       "expo-secure-store",
       "expo-font",
       "expo-splash-screen",
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "DoJeon needs access to your camera so you can take a photo as evidence for a check-in."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
@@ -45,6 +55,12 @@
         "projectId": "0ac83038-3290-458a-ad60-cbb437465833"
       }
     },
-    "owner": "kwkim16"
+    "owner": "kwkim16",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0ac83038-3290-458a-ad60-cbb437465833"
+    }
   }
 }

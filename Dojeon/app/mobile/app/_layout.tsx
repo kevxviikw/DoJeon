@@ -12,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { Stack } from "expo-router";
 import React, { useEffect } from "react";
 import { AuthProvider, useAuth } from "../lib/auth";
+import { ProfileProvider, useProfile } from "../lib/profile";
 import { ThemeProvider, useTheme } from "../lib/theme-context";
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -31,16 +32,23 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <RootNavigator />
-      </ThemeProvider>
+      <ProfileProvider>
+        <ThemeProvider>
+          <RootNavigator />
+        </ThemeProvider>
+      </ProfileProvider>
     </AuthProvider>
   );
 }
 
 function RootNavigator() {
-  const { session, loading } = useAuth();
+  const { session, loading: authLoading } = useAuth();
+  const { profile, loading: profileLoading } = useProfile();
   const { t } = useTheme();
+
+  // Wait for the profile too once signed in -- otherwise the tabs flash
+  // before we know whether onboarding is still needed.
+  const loading = authLoading || (!!session && profileLoading);
 
   useEffect(() => {
     if (!loading) {
@@ -50,13 +58,20 @@ function RootNavigator() {
 
   if (loading) return null;
 
+  const needsOnboarding = !!session && !profile?.username;
+
   return (
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: t.bg } }}>
-      <Stack.Protected guard={!!session}>
-        <Stack.Screen name="(tabs)" />
-      </Stack.Protected>
       <Stack.Protected guard={!session}>
         <Stack.Screen name="sign-in" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!session && needsOnboarding}>
+        <Stack.Screen name="onboarding" />
+      </Stack.Protected>
+      <Stack.Protected guard={!!session && !needsOnboarding}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="account" />
+        <Stack.Screen name="find-people" />
       </Stack.Protected>
     </Stack>
   );

@@ -90,7 +90,7 @@ export default function ForgeScreen() {
         })}
 
         {result.feasibility.feasible.minimum ? (
-          <PrimaryButton label="Go to Today" onPress={() => router.push("/index")} />
+          <PrimaryButton label="Go to Today" onPress={() => router.push("/")} />
         ) : null}
         <View style={{ height: 12 }} />
         <GhostButton label="Edit Goal" onPress={() => setResult(null)} />

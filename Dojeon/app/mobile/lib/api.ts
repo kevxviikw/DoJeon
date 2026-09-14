@@ -5,11 +5,13 @@
 // token automatically -- Postgres RLS (see supabase/migrations/0001_init.sql)
 // enforces every privacy/visibility rule server-side, same as before.
 
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { supabase } from "./supabase";
 import type {
   AdjustPlanResponse,
   CheckinApproveResponse,
   CheckinSubmitResponse,
+  DirectoryUser,
   ForgeResponse,
   MissionEndResponse,
   RankedMember,
@@ -23,7 +25,19 @@ import type {
 async function callFunction<T>(name: string, body?: unknown): Promise<T> {
   const { data, error } = await supabase.functions.invoke<T>(name, { body: body ?? {} });
   if (error) {
-    throw new Error(`${name} failed: ${error.message}`);
+    // On a non-2xx, error.message is the generic "Edge Function returned a
+    // non-2xx status code" -- the real reason is in the response body, which
+    // every function returns as { error: "..." } (see functions/_shared/cors.ts).
+    let detail = error.message;
+    if (error instanceof FunctionsHttpError) {
+      try {
+        const payload = await error.context.json();
+        if (payload?.error) detail = `${payload.error} (HTTP ${error.context.status})`;
+      } catch {
+        // body wasn't JSON -- fall back to the generic message
+      }
+    }
+    throw new Error(`${name} failed: ${detail}`);
   }
   return data as T;
 }
@@ -114,6 +128,10 @@ export function createSquad(name: string, sizeMin = 3, sizeMax = 6): Promise<{ s
 
 export function joinSquad(inviteCode: string): Promise<{ squadId: string }> {
   return callFunction("squad-join", { inviteCode });
+}
+
+export function searchUsers(query: string): Promise<{ users: DirectoryUser[] }> {
+  return callFunction<{ users: DirectoryUser[] }>("user-search", { query });
 }
 
 export function getLeaderboard(squadId: string): Promise<{ leaderboard: RankedMember[] }> {

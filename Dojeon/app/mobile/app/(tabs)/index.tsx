@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Card, Eyebrow, PrimaryButton, Tag } from "../../components/ui";
 import { useActiveMission } from "../../lib/hooks";
@@ -44,7 +44,14 @@ export default function TodayScreen() {
           element here on purpose (home screen only; Forge/Push/Proof keep
           the smaller ScreenHeader, since repeating a giant wordmark on
           every tab would fight the same manual's own restraint). */}
-      <Eyebrow color={t.muted}>{elapsedDays ? `Today · Day ${elapsedDays}` : "Today"}</Eyebrow>
+      <View style={styles.topRow}>
+        <Eyebrow color={t.muted}>{elapsedDays ? `Today · Day ${elapsedDays}` : "Today"}</Eyebrow>
+        <Pressable onPress={() => router.push("/account")} style={[styles.accountBtn, { borderColor: t.hairline }]}>
+          <Svg width={13} height={13} viewBox="0 0 20 20" fill="none" stroke={t.muted} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <Path d="M10 10a3 3 0 100-6 3 3 0 000 6zM4.5 16.5a5.5 5.5 0 0111 0" />
+          </Svg>
+        </Pressable>
+      </View>
       <Text style={[styles.wordmark, { color: t.text }]}>DoJeon</Text>
       <Text style={[styles.slogan, { color: t.muted }]}>
         Challenge Everything, <Text style={{ color: t.accent }}>Fear Nothing.</Text>
@@ -135,6 +142,8 @@ function HistoryRow({ row }: { row: CheckinRow }) {
 
 const styles = StyleSheet.create({
   content: { padding: 20, paddingTop: 60, paddingBottom: 40 },
+  topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  accountBtn: { width: 26, height: 26, borderRadius: 13, borderWidth: 1, alignItems: "center", justifyContent: "center" },
   wordmark: { fontFamily: fonts.displayBold, fontWeight: "700", fontSize: 54, letterSpacing: -2.2, lineHeight: 56, marginBottom: 6 },
   slogan: { fontFamily: fonts.serifItalic, fontSize: 17, marginBottom: 28 },
   body: { fontFamily: fonts.displayMedium, fontSize: 14, lineHeight: 20 },

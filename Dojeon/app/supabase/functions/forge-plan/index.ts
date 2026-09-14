@@ -8,6 +8,7 @@
 // no revenue yet. See _shared/gemini.ts for the model-id caveat -- set
 // GEMINI_MODEL explicitly before deploying, it has no silent default.
 
+import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
 import { callGeminiForJSON } from "../_shared/gemini.ts";
 import { checkDeliverable, assessFeasibility } from "../_shared/logic/forge.ts";
@@ -108,7 +109,7 @@ Deno.serve(async (req) => {
       updated_at: new Date().toISOString(),
     });
 
-    return jsonResponse({ mission, feasibility }, 201);
+    return jsonResponse({ mission: toCamelRow(mission), feasibility }, 201);
   } catch (err) {
     return errorResponse(err instanceof Error ? err.message : "Unknown error", 500);
   }

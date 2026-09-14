@@ -1,0 +1,50 @@
+# Supabase project config.
+#
+# Auth email is set to send a 6-digit verification code ({{ .Token }})
+# instead of a magic link. Magic links are wrong for this app: there is no
+# dojeon:// redirect handler, the client sets detectSessionInUrl:false, and
+# corporate mail scanners (Outlook Safe Links, Gmail) pre-fetch the link and
+# burn the single-use token before the user can click it. The app verifies
+# the code with supabase.auth.verifyOtp({ email, token, type: "email" }).
+#
+# IMPORTANT: editing email templates requires a custom SMTP provider. Supabase
+# blocks template changes on the free tier while using their built-in mailer
+# ("Email template modification is not available for free tier projects using
+# the default email provider"). Set up SMTP first (Auth -> Emails -> SMTP),
+# then push:
+#   cd Dojeon/app && npx supabase config push
+#
+# Every value below other than the templates + otp_length mirrors the current
+# remote config, so `config push` only changes the email templates.
+
+project_id = "dojeon"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = []
+jwt_expiry = 3600
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = false
+max_frequency = "1m0s"
+otp_length = 6
+otp_expiry = 3600
+
+[auth.email.template.confirmation]
+subject = "Your DoJeon sign-in code"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.magic_link]
+subject = "Your DoJeon sign-in code"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.recovery]
+subject = "Your DoJeon password reset code"
+content_path = "./supabase/templates/recovery.html"

@@ -5,6 +5,7 @@
 // leaves the check-in pending for squad peer approval. See Field Manual
 // §01/§02, and amendment C for peer approval.
 
+import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
 import { classifyEvent } from "../_shared/logic/history.ts";
 import { submitEvidence } from "../_shared/logic/proof.ts";
@@ -79,7 +80,7 @@ Deno.serve(async (req) => {
       .single();
     if (checkinError) return errorResponse(checkinError.message, 500);
 
-    return jsonResponse({ checkin, eventType }, 201);
+    return jsonResponse({ checkin: toCamelRow(checkin), eventType }, 201);
   } catch (err) {
     return errorResponse(err instanceof Error ? err.message : "Unknown error", 500);
   }

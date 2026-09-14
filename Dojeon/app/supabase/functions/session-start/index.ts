@@ -3,6 +3,7 @@
 // If squadId is given, joins (or starts) that squad's current session
 // round so the summary can group concurrent sessions together.
 
+import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
 import { startSession } from "../_shared/logic/push.ts";
 import { currentUserId, supabaseAsUser } from "../_shared/supabaseAdmin.ts";
@@ -69,7 +70,7 @@ Deno.serve(async (req) => {
       .single();
     if (sessionError) return errorResponse(sessionError.message, 500);
 
-    return jsonResponse({ session }, 201);
+    return jsonResponse({ session: toCamelRow(session) }, 201);
   } catch (err) {
     return errorResponse(err instanceof Error ? err.message : "Unknown error", 500);
   }

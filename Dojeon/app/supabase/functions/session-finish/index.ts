@@ -1,6 +1,7 @@
 // Push, step 4 -- POST { sessionId, outcome: "submit" | "blocker", blockerNote? }.
 // Finish by submitting the output, or recording a blocker instead.
 
+import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
 import { InvalidSessionTransition, recordBlocker, submitOutput } from "../_shared/logic/push.ts";
 import type { SessionState } from "../_shared/logic/push.ts";
@@ -48,7 +49,7 @@ Deno.serve(async (req) => {
       .single();
     if (updateError) return errorResponse(updateError.message, 500);
 
-    return jsonResponse({ session });
+    return jsonResponse({ session: toCamelRow(session) });
   } catch (err) {
     if (err instanceof InvalidSessionTransition) return errorResponse(err.message, 409);
     return errorResponse(err instanceof Error ? err.message : "Unknown error", 500);

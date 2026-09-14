@@ -34,6 +34,14 @@ function ProofIcon({ color }: { color: string }) {
     </Svg>
   );
 }
+function SquadIcon({ color }: { color: string }) {
+  return (
+    <Svg width={20} height={20} viewBox="0 0 20 20" fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <Circle cx={7} cy={7} r={2.5} />
+      <Path d="M2.5 16a4.5 4.5 0 019 0M13 8a2.5 2.5 0 000-5M14.5 16a4.5 4.5 0 00-2.2-3.9" />
+    </Svg>
+  );
+}
 
 export default function TabsLayout() {
   const { t } = useTheme();
@@ -51,6 +59,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="forge" options={{ title: "Forge", tabBarIcon: ({ color }) => <ForgeIcon color={String(color)} /> }} />
       <Tabs.Screen name="push" options={{ title: "Push", tabBarIcon: ({ color }) => <PushIcon color={String(color)} /> }} />
       <Tabs.Screen name="proof" options={{ title: "Proof", tabBarIcon: ({ color }) => <ProofIcon color={String(color)} /> }} />
+      <Tabs.Screen name="squad" options={{ title: "Squad", tabBarIcon: ({ color }) => <SquadIcon color={String(color)} /> }} />
     </Tabs>
   );
 }

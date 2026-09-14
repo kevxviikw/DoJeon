@@ -171,3 +171,40 @@ export interface MissionEndResponse {
   report: { achievementScore: number; consistencyScore: number } | null;
   squadDisbanded: boolean;
 }
+
+// --- Profile + squad (client-side reads via PostgREST, plus the
+// user-search Edge Function) ---
+
+export interface ProfileRow {
+  id: string;
+  username: string | null; // null until onboarding is finished
+  displayName: string;
+  createdAt: string;
+}
+
+export interface DirectoryUser {
+  userId: string;
+  username: string;
+  displayName: string;
+  inSquad: boolean;
+}
+
+export interface SquadMembership {
+  squadId: string;
+  name: string;
+  inviteCode: string;
+  sizeMax: number;
+  joinedAt: string;
+}
+
+export interface SquadRosterEntry {
+  userId: string;
+  username: string | null;
+  displayName: string;
+  rank: number;
+  score: number;
+  confirmedCheckins: number;
+  milestonesCompleted: number;
+  milestonesTotal: number;
+  live: boolean;
+}

@@ -5,6 +5,7 @@
 // trigger against the mission's recent tier_hit history. Field Manual §01
 // ("Adjust, the rules").
 
+import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
 import { detectRepeatedMinimumOnly, proposeAdjustment } from "../_shared/logic/adjust.ts";
 import type { Tier } from "../_shared/logic/types.ts";
@@ -85,7 +86,7 @@ Deno.serve(async (req) => {
       .single();
     if (adjustmentError) return errorResponse(adjustmentError.message, 500);
 
-    return jsonResponse({ adjustment, proposal, repeatedMinimumOnly }, 201);
+    return jsonResponse({ adjustment: toCamelRow(adjustment), proposal, repeatedMinimumOnly }, 201);
   } catch (err) {
     return errorResponse(err instanceof Error ? err.message : "Unknown error", 500);
   }

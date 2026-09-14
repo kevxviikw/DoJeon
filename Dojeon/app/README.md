@@ -15,7 +15,19 @@ club amendments (squad-scoped leaderboard, solo matching, peer-approved
 check-ins with a removal threshold, and consent-gated mission-end data
 collection).
 
-## What's here vs. what's still yours
+## Client: Expo, not native Swift
+
+**Update:** the client is now built in Expo/React Native (`mobile/`), not
+SwiftUI — switched so EAS Build can compile the iOS binary and submit to
+TestFlight in the cloud, with no Mac required. The Swift package
+(`ios/DojeonCore`) below is superseded but kept for reference; nothing
+current depends on it. See `mobile/README.md` for the real setup and
+TestFlight steps — it's further along than the description below,
+including actual working screens, not just a ViewModel layer, and it's
+been type-checked and bundled successfully (`mobile/` is genuinely
+verified to compile; the Swift package below never was).
+
+## What's here vs. what's still yours (original, Swift-era plan)
 
 **Built: everything except the screens.** Every business rule from the
 spec -- Forge's feasibility math, Push's session state machine, Proof's

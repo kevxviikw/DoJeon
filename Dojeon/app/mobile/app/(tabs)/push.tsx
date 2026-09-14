@@ -186,7 +186,7 @@ export default function PushScreen() {
         onPress={() => router.push({ pathname: "/proof", params: { missionId, sessionId: session?.id ?? "" } })}
       />
       <View style={{ height: 12 }} />
-      <GhostButton label="Back to Today" onPress={() => router.push("/index")} />
+      <GhostButton label="Back to Today" onPress={() => router.push("/")} />
     </ScrollView>
   );
 }

@@ -24,14 +24,10 @@
   "submit": {
     "production": {
       "ios": {
-        // Fill these in after enrolling in the Apple Developer Program.
-        // appleId    = your Apple ID email
-        // appleTeamId = App Store Connect -> Membership -> Team ID
-        // ascAppId   = the app's numeric ID in App Store Connect (created
-        //              on first `eas submit`, or via `eas build --submit`)
+        // ascAppId is filled in automatically after the first successful
+        // `eas submit` creates the App Store Connect app record.
         "appleId": "kwkim16@icloud.com",
-        "appleTeamId": "7KDTHKJULP",
-        "ascAppId": "YOUR_ASC_APP_ID"
+        "appleTeamId": "7KDTHKJULP"
       }
     }
   }

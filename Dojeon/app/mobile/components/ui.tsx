@@ -3,6 +3,7 @@
 // React Native components. Keep new screens built out of these rather
 // than one-off styles, so the whole app stays consistent with the manual.
 
+import { useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, View, type ViewStyle } from "react-native";
 import Svg, { Path } from "react-native-svg";
@@ -84,21 +85,29 @@ export function GhostButton({ label, onPress }: { label: string; onPress: () => 
 
 export function ScreenHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   const { toggleDarkMode, darkMode, t } = useTheme();
+  const router = useRouter();
   return (
     <View>
       <View style={styles.headerRow}>
         <Eyebrow>DoJeon</Eyebrow>
-        <Pressable onPress={toggleDarkMode} style={[styles.themeToggle, { borderColor: t.hairline }]}>
-          <Svg width={13} height={13} viewBox="0 0 20 20" fill="none" stroke={t.muted} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-            <Path
-              d={
-                darkMode
-                  ? "M13.5 3.5a7 7 0 100 14 7.6 7.6 0 01-6-3.6A7.6 7.6 0 0113.5 3.5z"
-                  : "M10 4v2M10 14v2M4 10h2M14 10h2M6.3 6.3l1.4 1.4M12.3 12.3l1.4 1.4M6.3 13.7l1.4-1.4M12.3 7.7l1.4-1.4M10 7a3 3 0 100 6 3 3 0 000-6z"
-              }
-            />
-          </Svg>
-        </Pressable>
+        <View style={styles.headerActions}>
+          <Pressable onPress={() => router.push("/account")} style={[styles.themeToggle, { borderColor: t.hairline }]}>
+            <Svg width={13} height={13} viewBox="0 0 20 20" fill="none" stroke={t.muted} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+              <Path d="M10 10a3 3 0 100-6 3 3 0 000 6zM4.5 16.5a5.5 5.5 0 0111 0" />
+            </Svg>
+          </Pressable>
+          <Pressable onPress={toggleDarkMode} style={[styles.themeToggle, { borderColor: t.hairline }]}>
+            <Svg width={13} height={13} viewBox="0 0 20 20" fill="none" stroke={t.muted} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+              <Path
+                d={
+                  darkMode
+                    ? "M13.5 3.5a7 7 0 100 14 7.6 7.6 0 01-6-3.6A7.6 7.6 0 0113.5 3.5z"
+                    : "M10 4v2M10 14v2M4 10h2M14 10h2M6.3 6.3l1.4 1.4M12.3 12.3l1.4 1.4M6.3 13.7l1.4-1.4M12.3 7.7l1.4-1.4M10 7a3 3 0 100 6 3 3 0 000-6z"
+                }
+              />
+            </Svg>
+          </Pressable>
+        </View>
       </View>
       <Title>{title}</Title>
       {subtitle ? <SerifAccent>{subtitle}</SerifAccent> : null}
@@ -128,6 +137,7 @@ const styles = StyleSheet.create({
   btnGhost: { height: 48, borderRadius: 999, borderWidth: 1, alignItems: "center", justifyContent: "center" },
   btnLabel: { fontFamily: fonts.displayBold, fontSize: 14, fontWeight: "600" },
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 },
+  headerActions: { flexDirection: "row", alignItems: "center", gap: 8 },
   themeToggle: { width: 26, height: 26, borderRadius: 13, borderWidth: 1, alignItems: "center", justifyContent: "center" },
   switchTrack: { width: 40, height: 22, borderRadius: 11, justifyContent: "center" },
   switchKnob: { position: "absolute", top: 2, width: 18, height: 18, borderRadius: 9, backgroundColor: "#FFFFFF" },

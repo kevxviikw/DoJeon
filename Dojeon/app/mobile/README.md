@@ -76,8 +76,20 @@ members by email. No Beta App Review wait for internal testers.
   peer-approval logic; only the literal binary attachment is missing.
 - **Bundle identifiers** (`com.pic.dojeon` in `app.json`) are placeholders
   — set them to whatever you reserve in App Store Connect.
-- **Squad, Adjust, leaderboard, solo-match, mission-end screens** don't
-  exist yet — same v0 scope as the design mockup, not a new gap.
+- **Adjust, solo-match, mission-end screens** don't exist yet — same v0
+  scope as the design mockup, not a new gap.
+- **Squad** now exists (`app/(tabs)/squad.tsx`): create / join-by-code,
+  roster with the squad-scoped leaderboard + who's live, and a global
+  `@username` directory search (`find-people`, backed by the `user-search`
+  Edge Function). `squad-create` / `squad-join` were switched to the
+  service-role client — under RLS a not-yet-member can neither insert a
+  `squads` row nor look one up by invite code. Bringing someone in still
+  goes through the invite code (no invite-inbox).
+- **Onboarding**: after sign-in, a member with no `profiles.username` is
+  routed to `app/onboarding.tsx` to pick a display name + unique `@handle`
+  before the tabs unlock (`profiles.username` added in migration `0003`).
+- **Account** (`app/account.tsx`, header icon on every tab): username,
+  editable display name, email, leave-squad, and sign-out.
 
 ## The superseded `../ios/` Swift package
 
