@@ -7,6 +7,7 @@
 
 import { toCamelRow } from "../_shared/camelCase.ts";
 import { corsHeaders, errorResponse, handleOptions, jsonResponse } from "../_shared/cors.ts";
+import { todayInTimeZone } from "../_shared/estDate.ts";
 import { classifyEvent } from "../_shared/logic/history.ts";
 import { submitEvidence } from "../_shared/logic/proof.ts";
 import { currentUserId, supabaseAsUser } from "../_shared/supabaseAdmin.ts";
@@ -21,7 +22,7 @@ interface CheckinRequestBody {
   tierHit?: "minimum" | "target" | "stretch" | null;
   fileUrl?: string | null;
   filePrivate?: boolean;
-  checkinDate?: string; // defaults to today (UTC) if omitted
+  checkinDate?: string; // defaults to today in America/New_York if omitted
 }
 
 Deno.serve(async (req) => {
@@ -64,7 +65,7 @@ Deno.serve(async (req) => {
         mission_id: body.missionId,
         user_id: userId,
         session_id: body.sessionId ?? null,
-        checkin_date: body.checkinDate ?? new Date().toISOString().slice(0, 10),
+        checkin_date: body.checkinDate ?? todayInTimeZone(),
         task_completed: record.taskCompleted,
         evidence_submitted: record.evidenceSubmitted,
         planned_rest: record.plannedRest,

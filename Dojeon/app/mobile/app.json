@@ -42,7 +42,8 @@
       [
         "expo-image-picker",
         {
-          "cameraPermission": "DoJeon needs access to your camera so you can take a photo as evidence for a check-in."
+          "cameraPermission": "DoJeon needs access to your camera so you can take a photo or video as evidence for a check-in.",
+          "microphonePermission": "DoJeon needs access to your microphone to record audio with your video evidence."
         }
       ]
     ],

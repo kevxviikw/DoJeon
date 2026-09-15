@@ -12,7 +12,10 @@ import { fonts } from "../../lib/theme";
 import { useTheme } from "../../lib/theme-context";
 import type { CheckinSubmitResponse, Tier } from "../../lib/types";
 
-type EvidenceType = "photo" | "voice" | "count";
+// Club presentation amendment (2026-09-15): photo and video only -- voice
+// and count were UI-only stubs (no recorder or input ever wired up) and
+// are dropped rather than shipped half-built.
+type EvidenceType = "photo" | "video";
 
 // Same tier vocabulary as Forge -- this is where a member reports which
 // tier of the plan they actually hit today (tierHit on the checkin row).
@@ -32,17 +35,23 @@ export default function ProofScreen() {
 
   const [tierHit, setTierHit] = useState<Tier | null>(null);
   const [evidenceType, setEvidenceType] = useState<EvidenceType>("photo");
-  const [photoUri, setPhotoUri] = useState<string | null>(null);
-  const [photoMime, setPhotoMime] = useState<string>("image/jpeg");
+  const [mediaUri, setMediaUri] = useState<string | null>(null);
+  const [mediaMime, setMediaMime] = useState<string>("image/jpeg");
   const [filePrivate, setFilePrivate] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CheckinSubmitResponse | null>(null);
 
-  // One tap on the card opens the camera directly -- evidence should be a
-  // photo taken right now, not an old one pulled from the library. Picking
-  // from the library is still available as a smaller, secondary action.
-  const handleTakePhoto = async () => {
+  const switchEvidenceType = (next: EvidenceType) => {
+    if (next === evidenceType) return;
+    setEvidenceType(next);
+    setMediaUri(null); // a photo attached under "Photo" isn't valid evidence for "Video"
+  };
+
+  // One tap on the card opens the camera directly -- evidence should be
+  // captured right now, not pulled from the library. Picking from the
+  // library is still available as a smaller, secondary action.
+  const handleCapture = async () => {
     setError(null);
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
@@ -50,12 +59,13 @@ export default function ProofScreen() {
       return;
     }
     const taken = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
+      mediaTypes: evidenceType === "photo" ? ["images"] : ["videos"],
       quality: 0.7,
+      videoMaxDuration: 60,
     });
     if (taken.canceled || !taken.assets?.[0]) return;
-    setPhotoUri(taken.assets[0].uri);
-    setPhotoMime(taken.assets[0].mimeType ?? "image/jpeg");
+    setMediaUri(taken.assets[0].uri);
+    setMediaMime(taken.assets[0].mimeType ?? (evidenceType === "photo" ? "image/jpeg" : "video/mp4"));
   };
 
   // No permission request needed here -- launchImageLibraryAsync uses
@@ -63,17 +73,17 @@ export default function ProofScreen() {
   // preserving by design and needs no app-level grant (the library docs
   // say MEDIA_LIBRARY is only required on iOS 10). Gating this behind
   // requestMediaLibraryPermissionsAsync(), like the old UIImagePicker
-  // flow needed, was the actual bug -- that call has nothing backing it
-  // in this build and was always coming back denied.
+  // flow needed, was a real bug -- that call has nothing backing it in
+  // this build and was always coming back denied.
   const handlePickFromLibrary = async () => {
     setError(null);
     const picked = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: evidenceType === "photo" ? ["images"] : ["videos"],
       quality: 0.7,
     });
     if (picked.canceled || !picked.assets?.[0]) return;
-    setPhotoUri(picked.assets[0].uri);
-    setPhotoMime(picked.assets[0].mimeType ?? "image/jpeg");
+    setMediaUri(picked.assets[0].uri);
+    setMediaMime(picked.assets[0].mimeType ?? (evidenceType === "photo" ? "image/jpeg" : "video/mp4"));
   };
 
   if (!missionId) {
@@ -89,21 +99,19 @@ export default function ProofScreen() {
     setError(null);
     setLoading(true);
     try {
-      // Voice and count evidence are still UI-only stubs (no recorder or
-      // input wired up) -- only "photo" actually has something to upload.
       let fileUrl: string | null = null;
-      if (evidenceType === "photo" && photoUri) {
+      if (mediaUri) {
         if (!session?.user?.id) throw new Error("Not signed in.");
-        const ext = photoMime.split("/")[1] || "jpg";
+        const ext = mediaMime.split("/")[1] || (evidenceType === "photo" ? "jpg" : "mp4");
         const path = `${session.user.id}/${missionId}-${Date.now()}.${ext}`;
         // Expo's fetch polyfill supports arrayBuffer() on file:// URIs --
         // this is Supabase's own documented RN upload pattern, no extra
-        // base64 conversion package needed.
-        const arraybuffer = await fetch(photoUri).then((res) => res.arrayBuffer());
+        // base64 conversion package needed. Works the same for video.
+        const arraybuffer = await fetch(mediaUri).then((res) => res.arrayBuffer());
         const { error: uploadError } = await supabase.storage
           .from("evidence")
-          .upload(path, arraybuffer, { contentType: photoMime });
-        if (uploadError) throw new Error(`Could not upload photo: ${uploadError.message}`);
+          .upload(path, arraybuffer, { contentType: mediaMime });
+        if (uploadError) throw new Error(`Could not upload ${evidenceType}: ${uploadError.message}`);
         fileUrl = path;
       }
 
@@ -111,7 +119,7 @@ export default function ProofScreen() {
         missionId,
         sessionId: params.sessionId || undefined,
         taskCompleted: true,
-        evidenceSubmitted: evidenceType === "photo" ? !!fileUrl : true,
+        evidenceSubmitted: !!fileUrl,
         tierHit,
         fileUrl,
         filePrivate,
@@ -150,7 +158,7 @@ export default function ProofScreen() {
     <ScrollView style={{ backgroundColor: t.bg }} contentContainerStyle={styles.content}>
       <ScreenHeader title="Proof" subtitle="evidence, not a checkbox" />
 
-      <Eyebrow>Tier hit</Eyebrow>
+      <Eyebrow>Which pace did you hit today?</Eyebrow>
       <View style={[styles.segmentRow, { marginTop: 8 }]}>
         {TIER_ORDER.map((tier) => {
           const hours = mission?.tiers[tier]?.hours;
@@ -169,7 +177,7 @@ export default function ProofScreen() {
               </Text>
               {hours !== undefined ? (
                 <Text style={{ fontFamily: fonts.mono, fontSize: 9, marginTop: 2, color: active ? t.onAccent : t.muted }}>
-                  {hours} hrs
+                  {hours} hrs total
                 </Text>
               ) : null}
             </Pressable>
@@ -177,14 +185,23 @@ export default function ProofScreen() {
         })}
       </View>
 
+      {/* The bare words "Minimum/Target/Stretch" don't mean anything on
+          their own -- show the actual tier description from the plan
+          Forge generated, so picking one is legible instead of jargon. */}
+      <Text style={{ fontFamily: fonts.displayMedium, fontSize: 12, lineHeight: 17, color: t.muted, marginBottom: 20 }}>
+        {tierHit && mission?.tiers[tierHit]?.description
+          ? mission.tiers[tierHit].description
+          : "Minimum = the bare-floor pace, doable even on a bad day. Target = keeps the mission on schedule. Stretch = the real reach. Pick whichever one your work today actually matched."}
+      </Text>
+
       <View style={{ height: 22 }} />
 
       <Eyebrow>Evidence</Eyebrow>
       <View style={[styles.segmentRow, { marginTop: 8 }]}>
-        {(["photo", "voice", "count"] as EvidenceType[]).map((type) => (
+        {(["photo", "video"] as EvidenceType[]).map((type) => (
           <Pressable
             key={type}
-            onPress={() => setEvidenceType(type)}
+            onPress={() => switchEvidenceType(type)}
             style={[
               styles.segment,
               evidenceType === type
@@ -199,40 +216,30 @@ export default function ProofScreen() {
         ))}
       </View>
 
-      {evidenceType === "photo" ? (
-        <>
-          <Pressable onPress={handleTakePhoto}>
-            <Card style={{ height: 96, marginBottom: 8, alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 0 }}>
-              {photoUri ? (
-                <Image source={{ uri: photoUri }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
-              ) : (
-                <Text style={{ fontFamily: fonts.displayMedium, fontSize: 12, color: t.muted }}>Tap to take a photo</Text>
-              )}
-            </Card>
-          </Pressable>
-          <Pressable onPress={handlePickFromLibrary} style={{ marginBottom: 8 }}>
-            <Tag color={t.muted}>{photoUri ? "Choose a different photo from library instead" : "Or choose from library"}</Tag>
-          </Pressable>
-        </>
-      ) : (
-        <Card style={{ height: 96, marginBottom: 8, alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ fontFamily: fonts.displayMedium, fontSize: 12, color: t.muted }}>
-            {{ voice: "Tap to record a voice note", count: "Enter a count or duration" }[evidenceType]}
-          </Text>
+      <Pressable onPress={handleCapture}>
+        <Card style={{ height: 96, marginBottom: 8, alignItems: "center", justifyContent: "center", overflow: "hidden", padding: 0 }}>
+          {mediaUri && evidenceType === "photo" ? (
+            <Image source={{ uri: mediaUri }} style={{ width: "100%", height: "100%" }} resizeMode="cover" />
+          ) : mediaUri && evidenceType === "video" ? (
+            <Text style={{ fontFamily: fonts.displayMedium, fontSize: 13, color: t.accent }}>🎥 Video attached — ready to submit</Text>
+          ) : (
+            <Text style={{ fontFamily: fonts.displayMedium, fontSize: 12, color: t.muted }}>
+              {evidenceType === "photo" ? "Tap to take a photo" : "Tap to record a video"}
+            </Text>
+          )}
         </Card>
-      )}
+      </Pressable>
+      <Pressable onPress={handlePickFromLibrary} style={{ marginBottom: 8 }}>
+        <Tag color={t.muted}>{mediaUri ? "Choose a different one from library instead" : "Or choose from library"}</Tag>
+      </Pressable>
 
-      {evidenceType === "photo" && photoUri ? (
-        <Pressable onPress={() => setPhotoUri(null)} style={{ marginBottom: 4 }}>
-          <Tag color={t.muted}>Remove photo</Tag>
+      {mediaUri ? (
+        <Pressable onPress={() => setMediaUri(null)} style={{ marginBottom: 4 }}>
+          <Tag color={t.muted}>{`Remove ${evidenceType}`}</Tag>
         </Pressable>
       ) : null}
 
-      {evidenceType === "photo" ? (
-        <Tag color={photoUri ? t.accent : t.muted}>{photoUri ? "Evidence: Attached" : "Evidence: Not attached yet"}</Tag>
-      ) : (
-        <Tag color={t.muted}>{`Evidence: Not available yet for ${evidenceType}`}</Tag>
-      )}
+      <Tag color={mediaUri ? t.accent : t.muted}>{mediaUri ? "Evidence: Attached" : "Evidence: Not attached yet"}</Tag>
 
       <Card style={{ marginTop: 22, marginBottom: 28 }}>
         <View style={styles.row}>
@@ -245,12 +252,7 @@ export default function ProofScreen() {
       </Card>
 
       {error ? <Text style={{ color: t.alert, fontFamily: fonts.mono, fontSize: 12, marginBottom: 12 }}>{error}</Text> : null}
-      <PrimaryButton
-        label="Submit Check-in"
-        loading={loading}
-        disabled={!tierHit || (evidenceType === "photo" && !photoUri)}
-        onPress={handleSubmit}
-      />
+      <PrimaryButton label="Submit Check-in" loading={loading} disabled={!tierHit || !mediaUri} onPress={handleSubmit} />
     </ScrollView>
   );
 }

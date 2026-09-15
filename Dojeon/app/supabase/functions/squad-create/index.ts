@@ -46,7 +46,10 @@ Deno.serve(async (req) => {
       .is("removed_at", null)
       .maybeSingle();
     if (existingError) return errorResponse(existingError.message, 500);
-    if (existing) return errorResponse("You're already in a squad. Leave it first.", 409);
+    // Members can't leave on their own anymore (2026-09-15 amendment) --
+    // the only way out is the squad's leader deleting it (before it's
+    // started) or the automatic missed-day removal sweep.
+    if (existing) return errorResponse("You're already in a squad.", 409);
 
     const { data: squad, error: squadError } = await supabase
       .from("squads")
@@ -55,6 +58,7 @@ Deno.serve(async (req) => {
         invite_code: generateInviteCode(),
         size_min: body.sizeMin ?? 3,
         size_max: body.sizeMax ?? 6,
+        created_by: userId,
       })
       .select()
       .single();

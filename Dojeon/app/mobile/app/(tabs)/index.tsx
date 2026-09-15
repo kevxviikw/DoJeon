@@ -3,6 +3,7 @@ import React from "react";
 import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 import { Card, Eyebrow, PrimaryButton, Tag } from "../../components/ui";
+import { daysRemainingUntil, missionDayNumber } from "../../lib/dates";
 import { useActiveMission } from "../../lib/hooks";
 import { fonts } from "../../lib/theme";
 import { useTheme } from "../../lib/theme-context";
@@ -29,10 +30,10 @@ export default function TodayScreen() {
   const completedMilestones = milestones.filter((m) => m.completed_at).length;
   const totalMilestones = milestones.length;
   const progressFraction = totalMilestones > 0 ? completedMilestones / totalMilestones : 0;
-  const daysRemaining = mission
-    ? Math.max(0, Math.ceil((new Date(mission.deadline).getTime() - Date.now()) / 86_400_000))
-    : null;
-  const elapsedDays = mission && daysRemaining !== null ? Math.max(1, mission.durationDays - daysRemaining) : null;
+  // Both anchored to America/New_York calendar dates, not raw UTC ms math
+  // (see lib/dates.ts) -- that's what was leaving this stuck on "Day 1".
+  const daysRemaining = mission ? daysRemainingUntil(mission.deadline) : null;
+  const elapsedDays = mission ? missionDayNumber(mission.createdAt) : null;
 
   return (
     <ScrollView

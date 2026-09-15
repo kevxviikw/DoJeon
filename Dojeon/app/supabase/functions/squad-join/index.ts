@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
     if (existing) {
       return existing.squad_id === squad.id
         ? jsonResponse({ squadId: squad.id }, 200)
-        : errorResponse("You're already in a squad. Leave it first.", 409);
+        : errorResponse("You're already in a squad.", 409);
     }
 
     const { count, error: countError } = await supabase

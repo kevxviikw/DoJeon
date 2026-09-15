@@ -31,3 +31,20 @@ export function checkRemoval(
     shouldRemove: fractionMissed > fractionThreshold,
   };
 }
+
+// Club presentation amendment (2026-09-15): a flat missed-day cap --
+// simpler than the fraction above, kicks a member after 5 missed days
+// regardless of mission length. Kept alongside checkRemoval (still
+// tested, just unused by squad-removal-sweep for now) rather than
+// replacing it, in case the fraction-based version is wanted back later.
+export const FLAT_REMOVAL_MISSED_DAYS = 5;
+
+export interface FlatRemovalCheck {
+  missedDays: number;
+  threshold: number;
+  shouldRemove: boolean;
+}
+
+export function checkFlatRemoval(missedDays: number, threshold: number = FLAT_REMOVAL_MISSED_DAYS): FlatRemovalCheck {
+  return { missedDays, threshold, shouldRemove: missedDays >= threshold };
+}

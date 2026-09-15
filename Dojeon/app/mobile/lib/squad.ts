@@ -35,14 +35,14 @@ export function useSquad(): SquadState {
     (async () => {
       const { data, error } = await supabase
         .from("squad_members")
-        .select("squad_id, joined_at, squads(name, invite_code, size_max, status)")
+        .select("squad_id, joined_at, squads(name, invite_code, size_max, status, created_by)")
         .eq("user_id", userId)
         .is("removed_at", null)
         .maybeSingle();
 
       if (cancelled) return;
       const squad = (data?.squads ?? null) as
-        | { name: string; invite_code: string; size_max: number; status: string }
+        | { name: string; invite_code: string; size_max: number; status: string; created_by: string | null }
         | null;
       if (error || !data || !squad || squad.status !== "active") {
         setMembership(null);
@@ -53,6 +53,7 @@ export function useSquad(): SquadState {
           inviteCode: squad.invite_code,
           sizeMax: squad.size_max,
           joinedAt: data.joined_at as string,
+          isLeader: squad.created_by === userId,
         });
       }
       setLoading(false);

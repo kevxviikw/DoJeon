@@ -130,6 +130,14 @@ export function joinSquad(inviteCode: string): Promise<{ squadId: string }> {
   return callFunction("squad-join", { inviteCode });
 }
 
+// Leader-only, and only before the squad has started anything -- see
+// supabase/functions/squad-delete. Members can't leave a squad on their
+// own at all (2026-09-15 club amendment); only this or the automatic
+// missed-day removal sweep changes squad_members now.
+export function deleteSquad(squadId: string): Promise<{ deleted: boolean }> {
+  return callFunction("squad-delete", { squadId });
+}
+
 export function searchUsers(query: string): Promise<{ users: DirectoryUser[] }> {
   return callFunction<{ users: DirectoryUser[] }>("user-search", { query });
 }

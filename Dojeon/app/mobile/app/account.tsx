@@ -1,15 +1,20 @@
 // Account / profile -- pushed as a stack screen from the header icon on
 // every tab. Shows identity (username, display name, email), the current
-// squad with a leave button, and sign-out (the only place it lives).
+// squad, and sign-out (the only place it lives).
+//
+// Club presentation amendment (2026-09-15): members can no longer leave a
+// squad on their own (see squad_members RLS in migrations/0005) -- only
+// the leader deleting the whole squad (and only before it's started), or
+// the automatic 5-missed-day removal sweep, change squad_members now.
 
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Card, Eyebrow, GhostButton, PrimaryButton, Title } from "../components/ui";
 import { useAuth } from "../lib/auth";
+import { deleteSquad } from "../lib/api";
 import { useProfile } from "../lib/profile";
 import { useSquad } from "../lib/squad";
-import { supabase } from "../lib/supabase";
 import { fonts } from "../lib/theme";
 import { useTheme } from "../lib/theme-context";
 
@@ -38,14 +43,30 @@ export default function AccountScreen() {
     }
   };
 
-  const leaveSquad = async () => {
-    if (!session?.user?.id) return;
+  const confirmDeleteSquad = () => {
+    if (!membership) return;
+    Alert.alert(
+      "Delete squad?",
+      `This deletes "${membership.name}" for everyone. Only possible before anyone's logged a session or check-in -- this can't be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: doDeleteSquad },
+      ]
+    );
+  };
+
+  const doDeleteSquad = async () => {
+    if (!membership) return;
     setBusy(true);
     setError(null);
-    const { error: delError } = await supabase.from("squad_members").delete().eq("user_id", session.user.id);
-    setBusy(false);
-    if (delError) setError(delError.message);
-    else refetchSquad();
+    try {
+      await deleteSquad(membership.squadId);
+      refetchSquad();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not delete squad.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -95,7 +116,13 @@ export default function AccountScreen() {
           <>
             <Text style={[styles.value, { color: t.text }]}>{membership.name}</Text>
             <View style={{ height: 12 }} />
-            <GhostButton label="Leave squad" onPress={leaveSquad} />
+            {membership.isLeader ? (
+              <GhostButton label="Delete squad" onPress={confirmDeleteSquad} />
+            ) : (
+              <Text style={{ fontFamily: fonts.displayMedium, fontSize: 11, color: t.muted, lineHeight: 16 }}>
+                Members can't leave a squad -- you're only removed automatically after 5 missed days.
+              </Text>
+            )}
           </>
         ) : (
           <Text style={[styles.value, { color: t.muted }]}>Not in a squad</Text>

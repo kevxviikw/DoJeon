@@ -127,6 +127,7 @@ export interface SquadRow {
   sizeMax: number;
   checkApprovalThreshold: number;
   missedDayRemovalFraction: number;
+  createdBy: string | null;
   status: SquadStatus;
   createdAt: string;
 }
@@ -195,6 +196,7 @@ export interface SquadMembership {
   inviteCode: string;
   sizeMax: number;
   joinedAt: string;
+  isLeader: boolean;
 }
 
 export interface SquadRosterEntry {
